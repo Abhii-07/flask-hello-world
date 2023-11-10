@@ -1,19 +1,35 @@
+# from flask import Flask, jsonify, request
+# from flask_sqlalchemy import SQLAlchemy
+# from flask_cors import CORS
+# from flask_migrate import Migrate
+
+
+
+# app = Flask(__name__)
+# # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/wanderlust_backend_db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost/wanderlust_db'
+# # app.config['SQLALCHEMY_DATABASE_URI'] ='postgres://wanderlust_db_kv6b_user:H4TfcxmDUZShtZs9YChZsKvCJb3pntAM@dpg-cl72uv8icrhc73d0ge10-a/wanderlust_db_kv6b'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# db = SQLAlchemy(app)
+# migrate = Migrate(app, db)
+# CORS(app)
+
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_migrate import Migrate
-
-
+import os
+import logging
+import sqlalchemy as sa
 
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/wanderlust_backend_db'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost/wanderlust_db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://wanderlust_db_kv6b_user:H4TfcxmDUZShtZs9YChZsKvCJb3pntAM@dpg-cl72uv8icrhc73d0ge10-a/wanderlust_db_kv6b'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://postgres:root@localhost/wanderlust_db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['LOG_WITH_GUNICORN'] = True  # Set to True if you want to log with Gunicorn
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 CORS(app)
-
 
 
 # Models
@@ -34,6 +50,16 @@ class Itinerary(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     destination_id = db.Column(db.Integer, db.ForeignKey('destination.id'), nullable=False)
     activity = db.Column(db.String(255), nullable=False)
+
+# Check if the database needs to be initialized
+engine = sa.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+inspector = sa.inspect(engine)
+if not inspector.has_table("destination"):
+    with app.app_context():
+        db.create_all()
+        app.logger.info('Initialized the database!')
+else:
+    app.logger.info('Database already contains the necessary tables.')
 
 # Routes
 
@@ -186,5 +212,5 @@ def delete_itinerary(itinerary_id):
         return jsonify({'message': 'Itinerary activity deleted successfully'})
     return jsonify({'message': 'Itinerary activity not found'}, 404)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
