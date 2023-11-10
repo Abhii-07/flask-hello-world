@@ -37,4 +37,4 @@ psycopg2-binary==2.9.9
 SQLAlchemy==2.0.23
 typing_extensions==4.7.1
 Werkzeug==2.2.3
-gunicorn==19.7.1
+gunicorn==21.2.0
