@@ -3,3 +3,4 @@ Gunicorn
 Flask-Cors
 Flask-Migrate
 Flask-SQLAlchemy
+mysqlclient
