@@ -7,7 +7,8 @@ from flask_migrate import Migrate
 
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/wanderlust_backend_db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost/wanderlust_db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost/wanderlust_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://wanderlust_db_kv6b_user:H4TfcxmDUZShtZs9YChZsKvCJb3pntAM@dpg-cl72uv8icrhc73d0ge10-a/wanderlust_db_kv6b'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
