@@ -1,2 +1,5 @@
 Flask
 Gunicorn
+Flask-Cors
+Flask-Migrate
+Flask-SQLAlchemy
